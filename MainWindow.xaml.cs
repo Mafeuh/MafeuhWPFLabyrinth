@@ -35,9 +35,6 @@ namespace MafeuhLabyWPF
     partial class MainWindow : Window
     {
         public static MainWindow Instance { get; set; }
-
-        public List<Rectangle> Walls { get; set; } = new List<Rectangle>();
-
         public Simulation CurrentSimulation { get; set; }
         public MainWindow()
         {

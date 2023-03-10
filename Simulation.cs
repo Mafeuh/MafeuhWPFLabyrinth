@@ -15,16 +15,15 @@ namespace MafeuhLabyWPF
         public (int X, int Y) StartPosition = (2, 2);
         public int NextWidth { get; set; } = 20;
         public int NextHeight { get; set; } = 30;
-        public Grid Grid { get; set; }
         public WallGenerationAlgorithm Algorithm { get; set; }
         public Simulation()
         {
-            Grid = new Grid(20);
+
         }
 
         public void GenerateNextGrid()
         {
-            Grid = new Grid(20);
+
         }
         public void NotifyPropertyChanged(string propertyName)
         {

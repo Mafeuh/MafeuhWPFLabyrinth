@@ -22,6 +22,7 @@ namespace MafeuhLabyWPF
         protected Grid grid;
         public virtual bool HasBorderWalls { get; set; }
         public string AlgorithmName { get; set; }
+        public List<Rectangle> Walls { get; set; }
         public WallGenerationAlgorithm(string algorithmName, Grid grid)
         {
             AlgorithmName = algorithmName;
@@ -31,7 +32,10 @@ namespace MafeuhLabyWPF
         {
             AlgorithmName = algorithmName;
         }
-        public abstract void Generate();
+        public virtual void Generate()
+        {
+            Walls.Clear();
+        }
         public override string ToString()
         {
             return AlgorithmName;
@@ -48,6 +52,7 @@ namespace MafeuhLabyWPF
         }
         public override void Generate()
         {
+            base.Generate();
             foreach(StackPanel col in MainWindow.Instance.simGrid.Children)
             {
                 int x = MainWindow.Instance.simGrid.Children.IndexOf(col);
@@ -57,7 +62,7 @@ namespace MafeuhLabyWPF
 
                     if(rnd.NextDouble() < WallDensity)
                     {
-                        MainWindow.Instance.Walls.Add(cell);
+                        Walls.Add(cell);
                         cell.Fill = new SolidColorBrush(MainWindow.CellTypeGetColor(MainWindow.CellType.Wall));
                     } else
                     {
@@ -70,14 +75,13 @@ namespace MafeuhLabyWPF
     class RandPrim : WallGenerationAlgorithm
     {
         public static RandPrim Instance = new RandPrim();
-        private List<Cell> wallList = new List<Cell>();
         public RandPrim() : base("Rand Prim")
         {
             Instance = this;
         }
         public override void Generate()
         {
-
+            base.Generate();
         }
         public void Generate(Cell cell)
         {
