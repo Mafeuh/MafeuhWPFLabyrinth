@@ -1,0 +1,52 @@
+﻿<Window x:Class="MafeuhLabyWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MafeuhLabyWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <GroupBox Header="Settings" Margin="0,0,10,10" Width="189" HorizontalAlignment="Right">
+            <StackPanel>
+                <GroupBox Height="126" Header="Next Grid Properties" FontSize="10">
+                    <StackPanel Height="84">
+                        <StackPanel Height="21" Orientation="Horizontal">
+                            <Label Content="Width:"/>
+                            <TextBox x:Name="inputWidth" TextWrapping="Wrap" Text="{Binding NextWidth, Mode=TwoWay}" Width="117" Margin="3,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Height="21" Orientation="Horizontal">
+                            <Label Content="Height:"/>
+                            <TextBox x:Name="inputHeight" TextWrapping="Wrap" Text="{Binding NextHeight, Mode=TwoWay}" Width="117"/>
+                        </StackPanel>
+                        <Button x:Name="generateNewGrid" Content="Generate!" HorizontalAlignment="Center" Width="100" Click="generateNewGrid_Click"/>
+                        <Label x:Name="errorCreation" Content="&#xD;&#xA;"/>
+                    </StackPanel>
+                </GroupBox>
+                <CheckBox x:Name="showGrid" Content="Show Grid Layout" Checked="showGrid_Checked" Unchecked="showGrid_Unchecked"/>
+                <GroupBox Height="250" Header="Actions">
+                    <StackPanel>
+                        <Label Content="Wall Generation Algorithm" HorizontalAlignment="Center"/>
+                        <ListBox x:Name="algoList" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="algoList_SelectionChanged"/>
+                        
+                        <Button x:Name="btnCreateWalls" Content="Create Walls" Margin="5,5,5,0" Click="btnCreateWalls_Click"/>
+                        <Separator Height="22"/>
+                        <Button x:Name="btnStartSolv" Content="Start Solving" Click="btnStartSolv_Click" Margin="5,0,5,0"/>
+                        <Button x:Name="btnPauseSolv" Content="Pause Solving" Margin="5,5,5,0"/>
+                        <Button x:Name="btnStopSolv" Content="Stop Solving" Click="btnStopSolv_Click" Margin="5,5,5,0"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox x:Name="GridGroupBox" Header="Simulation" Margin="10,0,204,10" Width="{Binding Path=ActualHeight, RelativeSource={RelativeSource self}}">
+            <StackPanel x:Name="simGrid" Orientation="Horizontal" Margin="2,2,0,0"/>
+        </GroupBox>
+
+    </Grid>
+
+    <Window.Resources>
+        <Style TargetType="{x:Type Grid}" x:Key="simGridStyle">
+            <Setter Property="Background" Value="AliceBlue"/>
+        </Style>
+    </Window.Resources>
+</Window>
