@@ -6,22 +6,21 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace MafeuhLabyWPF
 {
     public class Simulation
     {
         public (int X, int Y) EndPosition = (0, 0);
-        public (int X, int Y) StartPosition = (2, 2);
+        public (int X, int Y) StartPosition = (0, 0);
         public int NextWidth { get; set; } = 20;
         public int NextHeight { get; set; } = 30;
+        public int CurrentWidth { get; set; }
+        public int CurrentHeight { get; set; }
         public WallGenerationAlgorithm Algorithm { get; set; }
+        public List<Rectangle> PathList { get; set; } = new List<Rectangle>();
         public Simulation()
-        {
-
-        }
-
-        public void GenerateNextGrid()
         {
 
         }

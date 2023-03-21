@@ -19,15 +19,9 @@ namespace MafeuhLabyWPF
             new RandPrim(),
             new RandomWalls()
         };
-        protected Grid grid;
         public virtual bool HasBorderWalls { get; set; }
         public string AlgorithmName { get; set; }
         public List<Rectangle> Walls { get; set; }
-        public WallGenerationAlgorithm(string algorithmName, Grid grid)
-        {
-            AlgorithmName = algorithmName;
-            this.grid = grid;
-        }
         public WallGenerationAlgorithm(string algorithmName)
         {
             AlgorithmName = algorithmName;
@@ -39,6 +33,51 @@ namespace MafeuhLabyWPF
         public override string ToString()
         {
             return AlgorithmName;
+        }
+
+        public void SetWall(Rectangle rectangle)
+        {
+            rectangle.Fill = new SolidColorBrush(Colors.Gray);
+            if (MainWindow.Instance.CurrentSimulation.PathList.Contains(rectangle))
+            {
+                MainWindow.Instance.CurrentSimulation.PathList.Remove(rectangle);
+            }
+        }
+        public void SetPath(Rectangle rectangle)
+        {
+            rectangle.Fill = new SolidColorBrush(Colors.White);
+            if (!MainWindow.Instance.CurrentSimulation.PathList.Contains(rectangle))
+            {
+                MainWindow.Instance.CurrentSimulation.PathList.Add(rectangle);
+            }
+        }
+        public List<Rectangle> GetNeighbors((int x, int y) pos)
+        {
+            var instance = MainWindow.Instance;
+            var width = instance.CurrentSimulation.CurrentWidth;
+            var height = instance.CurrentSimulation.CurrentHeight;
+
+            List<Rectangle> result = new List<Rectangle>();
+            if (pos.x - 1 >= 0) result.Add(instance.GetCellFromGrid(pos.x - 1, pos.y));
+            if (pos.x + 1 < width) result.Add(instance.GetCellFromGrid(pos.x + 1, pos.y));
+            if (pos.y - 1 >= 0) result.Add(instance.GetCellFromGrid(pos.x, pos.y - 1));
+            if (pos.y + 1 < height) result.Add(instance.GetCellFromGrid(pos.x, pos.y + 1));
+
+            return result;
+        }
+        public List<(int x, int y)> GetNeighborsPositions((int x, int y) pos)
+        {
+            var instance = MainWindow.Instance;
+            var width = instance.CurrentSimulation.CurrentWidth;
+            var height = instance.CurrentSimulation.CurrentHeight;
+
+            List<(int x, int y)> result = new List<(int x, int y)>();
+            if (pos.x - 1 >= 0) result.Add((pos.x - 1, pos.y));
+            if (pos.x + 1 < width) result.Add((pos.x + 1, pos.y));
+            if (pos.y - 1 >= 0) result.Add((pos.x, pos.y - 1));
+            if (pos.y + 1 < height) result.Add((pos.x, pos.y + 1));
+
+            return result;
         }
     }
     class RandomWalls : WallGenerationAlgorithm
@@ -75,6 +114,7 @@ namespace MafeuhLabyWPF
     class RandPrim : WallGenerationAlgorithm
     {
         public static RandPrim Instance = new RandPrim();
+        public List<(int x, int y)> walls = new List<(int x, int y)>();
         public RandPrim() : base("Rand Prim")
         {
             Instance = this;
@@ -82,28 +122,21 @@ namespace MafeuhLabyWPF
         public override void Generate()
         {
             base.Generate();
-        }
-        public void Generate(Cell cell)
-        {
-            /*
-            wallList.AddRange(cell.GetNeighbors.Where(n => n.IsWall));
-            wallList.RemoveAll(n => n.GetNeighbors.Count(n2 => !n2.IsWall) != 1);
-            if(wallList.Count > 0)
-            {
-                Cell nextWall = wallList[new Random().Next(wallList.Count)];
-                wallList.Remove(nextWall);
-                nextWall.IsWall = false;
-                Game1.Instance.AddEvent(new TimedEvent(() => Generate(nextWall), 0));
-            } else
-            {
-                grid.EndCell.IsWall = false;
 
-                if(grid.EndCell.GetNeighbors.Count(n => !n.IsWall) == 0)
-                {
-                    grid.EndCell.GetNeighbors[new Random().Next(grid.EndCell.GetNeighbors.Count)].IsWall = false;
-                }
+            
+        }
+        private void Generate((int x, int y) pos)
+        {
+            if (pos.x < 0 || pos.y < 0 || pos.x >= MainWindow.Instance.CurrentSimulation.CurrentWidth || pos.y >= MainWindow.Instance.CurrentSimulation.CurrentHeight) return;
+
+            Rectangle r = MainWindow.Instance.GetCellFromGrid(pos.x, pos.y);
+
+            SetPath(r);
+
+            foreach(var neighbor in GetNeighborsPositions((pos.x, pos.y)))
+            {
+                if (!walls.Contains(neighbor)) walls.Add(neighbor);
             }
-            */
         }
     }
 }

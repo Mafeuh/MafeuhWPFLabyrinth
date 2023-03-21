@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,6 +37,22 @@ namespace MafeuhLabyWPF
     {
         public static MainWindow Instance { get; set; }
         public Simulation CurrentSimulation { get; set; }
+
+        public Rectangle GetStartRectangle => GetCellFromGrid(CurrentSimulation.StartPosition.X, CurrentSimulation.StartPosition.Y);
+        public Rectangle GetEndRectangle => GetCellFromGrid(CurrentSimulation.EndPosition.X, CurrentSimulation.EndPosition.Y);
+
+        public List<Rectangle> GetCrossNeighbors(int x, int y)
+        {
+            /*List<Rectangle> cells = new List<Rectangle>();
+            if (x - 1 >= 0) cells.Add(grid.GetCell(Position.X - 1, Position.Y));
+            if (x + 1 < grid.Width) cells.Add(grid.GetCell(Position.X + 1, Position.Y));
+            if (x - 1 >= 0) cells.Add(grid.GetCell(Position.X, Position.Y - 1));
+            if (x + 1 < CurrentSimulation.) cells.Add(grid.GetCell(x, Position.Y + 1));
+
+            return cells;*/
+
+            return null;
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -51,10 +68,6 @@ namespace MafeuhLabyWPF
             Instance = this;
 
         }
-        private Rectangle Wall => new Rectangle()
-        {
-            Fill = new SolidColorBrush(Colors.Gray)
-        };
         public enum CellType
         {
             Wall,
@@ -190,6 +203,9 @@ namespace MafeuhLabyWPF
                     margin.Left = -1;
                     col.Margin = margin;
                     simGrid.Children.Add(col);
+
+                    CurrentSimulation.CurrentWidth = newWidth;
+                    CurrentSimulation.CurrentHeight = newHeight;
                 }
             } else
             {
@@ -259,6 +275,22 @@ namespace MafeuhLabyWPF
             {
                 MessageBox.Show("Please select an algorithm in the list");
             }
+        }
+    }
+
+    public class TimedEvent
+    {
+        public DateTime ExecutionTime { get; set; }
+        public Action Action { get; set; }
+        public TimedEvent(DateTime executionTime, Action action)
+        {
+            ExecutionTime = executionTime;
+            Action = action;
+        }
+        public TimedEvent(int delayInS, Action action)
+        {
+            ExecutionTime = DateTime.Now.AddSeconds(delayInS);
+            Action = action;
         }
     }
 }
