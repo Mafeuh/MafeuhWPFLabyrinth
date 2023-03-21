@@ -39,7 +39,13 @@
             </StackPanel>
         </GroupBox>
         <GroupBox x:Name="GridGroupBox" Header="Simulation" Margin="10,0,204,10" Width="{Binding Path=ActualHeight, RelativeSource={RelativeSource self}}">
-            <StackPanel x:Name="simGrid" Orientation="Horizontal" Margin="2,2,0,0"/>
+            <ItemsControl x:Name="SimGrid">
+                <ItemsControl.ItemPanel>
+                    <ItemsPanelTemplate>
+                        <Grid x:Name="SimulationGrid" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemPanel>
+            </ItemsControl>
         </GroupBox>
 
     </Grid>

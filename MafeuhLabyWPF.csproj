@@ -55,6 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Cell.cs" />
+    <Compile Include="CellGrid.cs" />
     <Compile Include="RandomWallsSettings.xaml.cs">
       <DependentUpon>RandomWallsSettings.xaml</DependentUpon>
     </Compile>

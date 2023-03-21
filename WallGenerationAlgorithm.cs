@@ -92,9 +92,9 @@ namespace MafeuhLabyWPF
         public override void Generate()
         {
             base.Generate();
-            foreach(StackPanel col in MainWindow.Instance.simGrid.Children)
+            foreach(StackPanel col in MainWindow.Instance.SimulationGrid.Children)
             {
-                int x = MainWindow.Instance.simGrid.Children.IndexOf(col);
+                int x = MainWindow.Instance.SimulationGrid.Children.IndexOf(col);
                 foreach(Rectangle cell in col.Children)
                 {
                     int y = col.Children.IndexOf(cell);

@@ -68,13 +68,6 @@ namespace MafeuhLabyWPF
             Instance = this;
 
         }
-        public enum CellType
-        {
-            Wall,
-            Path,
-            End,
-            Start
-        }
         public static Color CellTypeGetColor(CellType cellType)
         {
             switch(cellType)
@@ -92,7 +85,7 @@ namespace MafeuhLabyWPF
         }
         private Rectangle CreateCell(int amount, CellType type)
         {
-            int side = Convert.ToInt32(simGrid.ActualWidth / amount);
+            int side = Convert.ToInt32(SimulationGrid.ActualWidth / amount);
             Rectangle cell = new Rectangle()
             {
                 Stroke = new SolidColorBrush(showGrid.IsEnabled ? Colors.Black : Colors.Transparent),
@@ -118,7 +111,7 @@ namespace MafeuhLabyWPF
             var rect = (Rectangle)sender;
             
             //Récupération des coordonnées X et Y du rectangle
-            int x = simGrid.Children.IndexOf((StackPanel)rect.Parent);
+            int x = SimulationGrid.Children.IndexOf((StackPanel)rect.Parent);
             int y = ((StackPanel)rect.Parent).Children.IndexOf(rect);
 
             if(CurrentSimulation.StartPosition.X > -1 && CurrentSimulation.StartPosition.Y > -1)
@@ -147,7 +140,7 @@ namespace MafeuhLabyWPF
             var rect = (Rectangle)sender;
 
             //Récupération des coordonnées X et Y du rectangle
-            int x = simGrid.Children.IndexOf((StackPanel)rect.Parent);
+            int x = SimulationGrid.Children.IndexOf((StackPanel)rect.Parent);
             int y = ((StackPanel)rect.Parent).Children.IndexOf(rect);
 
             if (CurrentSimulation.EndPosition.X > -1 && CurrentSimulation.EndPosition.Y > -1)
@@ -184,7 +177,9 @@ namespace MafeuhLabyWPF
 
                 errorCreation.Content = "";
 
-                simGrid.Children.Clear();
+                SimulationGrid.ColumnDefinitions.Clear();
+                SimulationGrid.RowDefinitions.Clear();
+
 
                 for (int i = 0; i < newWidth; i++)
                 {
@@ -202,7 +197,7 @@ namespace MafeuhLabyWPF
                     var margin = col.Margin;
                     margin.Left = -1;
                     col.Margin = margin;
-                    simGrid.Children.Add(col);
+                    SimulationGrid.Children.Add(col);
 
                     CurrentSimulation.CurrentWidth = newWidth;
                     CurrentSimulation.CurrentHeight = newHeight;
@@ -214,11 +209,11 @@ namespace MafeuhLabyWPF
         }
         public Rectangle GetCellFromGrid(int x, int y)
         {
-            return (Rectangle)((StackPanel)simGrid.Children[x]).Children[y];
+            return (Rectangle)((StackPanel)SimulationGrid.Children[x]).Children[y];
         }
         private void showGrid_Checked(object sender, RoutedEventArgs e)
         {
-            foreach(StackPanel col in simGrid.Children)
+            foreach(CellType cell in SimulationGrid.Children)
             {
                 foreach(Rectangle cell in col.Children)
                 {
@@ -228,7 +223,7 @@ namespace MafeuhLabyWPF
         }
         private void showGrid_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (StackPanel col in simGrid.Children)
+            foreach (StackPanel col in SimulationGrid.Children)
             {
                 foreach (Rectangle cell in col.Children)
                 {
