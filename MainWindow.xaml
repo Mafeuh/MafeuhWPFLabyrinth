@@ -7,28 +7,33 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <GroupBox Header="Settings" Margin="0,0,10,10" Width="189" HorizontalAlignment="Right">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="1,0.5" EndPoint="0,0.5">
+                <GradientStop Color="AliceBlue" Offset="0.0"></GradientStop>
+                <GradientStop Color="AntiqueWhite" Offset="0.9"></GradientStop>
+            </LinearGradientBrush>
+        </Grid.Background>
+        <GroupBox Header="Settings" Margin="0,32,10,10" Width="189" HorizontalAlignment="Right">
             <StackPanel>
-                <GroupBox Height="126" Header="Next Grid Properties" FontSize="10">
+                <GroupBox Height="95" Header="Next Grid Properties" FontSize="10">
                     <StackPanel Height="84">
                         <StackPanel Height="21" Orientation="Horizontal">
                             <Label Content="Width:"/>
-                            <TextBox x:Name="inputWidth" TextWrapping="Wrap" Text="{Binding NextWidth, Mode=TwoWay}" Width="117" Margin="3,0,0,0"/>
+                            <TextBox x:Name="inputWidth" TextWrapping="Wrap" Text="{Binding NextWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="117" Margin="3,0,0,0"/>
                         </StackPanel>
                         <StackPanel Height="21" Orientation="Horizontal">
                             <Label Content="Height:"/>
-                            <TextBox x:Name="inputHeight" TextWrapping="Wrap" Text="{Binding NextHeight, Mode=TwoWay}" Width="117"/>
+                            <TextBox x:Name="inputHeight" TextWrapping="Wrap" Text="{Binding NextHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="117"/>
                         </StackPanel>
                         <Button x:Name="generateNewGrid" Content="Generate!" HorizontalAlignment="Center" Width="100" Click="generateNewGrid_Click"/>
-                        <Label x:Name="errorCreation" Content="&#xD;&#xA;"/>
                     </StackPanel>
                 </GroupBox>
-                <CheckBox x:Name="showGrid" Content="Show Grid Layout" Checked="showGrid_Checked" Unchecked="showGrid_Unchecked"/>
+                <CheckBox x:Name="showGrid" Content="Show Grid Layout" IsChecked="{Binding Settings.IsGridVisible, Mode=TwoWay}"/>
                 <GroupBox Height="250" Header="Actions">
                     <StackPanel>
                         <Label Content="Wall Generation Algorithm" HorizontalAlignment="Center"/>
                         <ListBox x:Name="algoList" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="algoList_SelectionChanged"/>
-                        
+
                         <Button x:Name="btnCreateWalls" Content="Create Walls" Margin="5,5,5,0" Click="btnCreateWalls_Click"/>
                         <Separator Height="22"/>
                         <Button x:Name="btnStartSolv" Content="Start Solving" Click="btnStartSolv_Click" Margin="5,0,5,0"/>
@@ -38,16 +43,23 @@
                 </GroupBox>
             </StackPanel>
         </GroupBox>
-        <GroupBox x:Name="GridGroupBox" Header="Simulation" Margin="10,0,204,10" Width="{Binding Path=ActualHeight, RelativeSource={RelativeSource self}}">
-            <ItemsControl x:Name="SimGrid">
-                <ItemsControl.ItemPanel>
-                    <ItemsPanelTemplate>
-                        <Grid x:Name="SimulationGrid" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemPanel>
-            </ItemsControl>
+        <GroupBox x:Name="GridGroupBox" Header="Simulation" Margin="91,32,285,10" Width="{Binding Path=ActualHeight, RelativeSource={RelativeSource self}}">
+            <Grid x:Name="SimulationGrid" ShowGridLines="{Binding Path=Settings.IsGridVisible}">
+            </Grid>
         </GroupBox>
-
+        <Menu VerticalAlignment="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New grid"/>
+                <MenuItem Header="_Open Configuration..."/>
+                <MenuItem Header="_Save Configuration..."/>
+            </MenuItem>
+            <MenuItem Header="_Show">
+                <MenuItem Header="Show/Hide Settings" IsCheckable="True" IsChecked="{Binding Settings.IsGridVisible, Mode=TwoWay}"/>
+            </MenuItem>
+            <MenuItem Header="?">
+                <MenuItem Header="Info"/>
+            </MenuItem>
+        </Menu>
     </Grid>
 
     <Window.Resources>

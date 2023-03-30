@@ -25,7 +25,6 @@ using System.Windows.Shapes;
  * 
  * 
  * 
- * 
  */
 
 namespace MafeuhLabyWPF
@@ -37,21 +36,14 @@ namespace MafeuhLabyWPF
     {
         public static MainWindow Instance { get; set; }
         public Simulation CurrentSimulation { get; set; }
-
+        public Settings Settings => CurrentSimulation.Settings;
         public Rectangle GetStartRectangle => GetCellFromGrid(CurrentSimulation.StartPosition.X, CurrentSimulation.StartPosition.Y);
         public Rectangle GetEndRectangle => GetCellFromGrid(CurrentSimulation.EndPosition.X, CurrentSimulation.EndPosition.Y);
 
         public List<Rectangle> GetCrossNeighbors(int x, int y)
         {
-            /*List<Rectangle> cells = new List<Rectangle>();
-            if (x - 1 >= 0) cells.Add(grid.GetCell(Position.X - 1, Position.Y));
-            if (x + 1 < grid.Width) cells.Add(grid.GetCell(Position.X + 1, Position.Y));
-            if (x - 1 >= 0) cells.Add(grid.GetCell(Position.X, Position.Y - 1));
-            if (x + 1 < CurrentSimulation.) cells.Add(grid.GetCell(x, Position.Y + 1));
 
-            return cells;*/
-
-            return null;
+            return new List<Rectangle>();
         }
         public MainWindow()
         {
@@ -68,21 +60,6 @@ namespace MafeuhLabyWPF
             Instance = this;
 
         }
-        public static Color CellTypeGetColor(CellType cellType)
-        {
-            switch(cellType)
-            {
-                case CellType.Wall:
-                    return Colors.Gray;
-                case CellType.Path:
-                    return Colors.White; 
-                case CellType.End:
-                    return Colors.Red; 
-                case CellType.Start:
-                    return Colors.Green;
-            }
-            return Colors.Transparent;
-        }
         private Rectangle CreateCell(int amount, CellType type)
         {
             int side = Convert.ToInt32(SimulationGrid.ActualWidth / amount);
@@ -94,7 +71,7 @@ namespace MafeuhLabyWPF
             };
             
             //Génération du style du rectangle
-            cell.Fill = new SolidColorBrush(CellTypeGetColor(type));
+            cell.Fill = new SolidColorBrush(CellTypeM.CellTypeGetColor(type));
             var margin = cell.Margin;
             margin.Top = -1;
             cell.Margin = margin;
@@ -171,67 +148,57 @@ namespace MafeuhLabyWPF
         {
             if(
                 int.TryParse(inputWidth.Text, out int newWidth) && 
-                int.TryParse(inputHeight.Text, out int newHeight) && newWidth > 0 && newHeight > 0)
+                int.TryParse(inputHeight.Text, out int newHeight) && newWidth > 1 && newHeight > 1)
             {
-                showGrid.IsChecked = true;
+                CurrentSimulation.CellGrid = new CellGrid(newWidth, newHeight);
 
-                errorCreation.Content = "";
-
+                SimulationGrid.Children.Clear();
                 SimulationGrid.ColumnDefinitions.Clear();
                 SimulationGrid.RowDefinitions.Clear();
 
-
-                for (int i = 0; i < newWidth; i++)
+                int sizeInPixels = Convert.ToInt32(Math.Min(
+                    (GridGroupBox.ActualHeight - 10) / newHeight, 
+                    (GridGroupBox.ActualWidth - 10) / newWidth
+                ));
+                for(int i = 0; i < newWidth; i++) SimulationGrid.ColumnDefinitions.Add(new ColumnDefinition()
                 {
-                    StackPanel col = new StackPanel()
-                    {
-                        Orientation = Orientation.Vertical
-                    };
-                    for (int j = 0; j < newHeight; j++)
-                    {
-                        CellType cellType = CellType.Wall;
-                        if (i == CurrentSimulation.StartPosition.X && j == CurrentSimulation.StartPosition.Y) cellType = CellType.Start;
-                        if (i == CurrentSimulation.EndPosition.X && j == CurrentSimulation.EndPosition.Y) cellType = CellType.End;
-                        col.Children.Add(CreateCell(Math.Max(newWidth, newHeight), cellType));
-                    }
-                    var margin = col.Margin;
-                    margin.Left = -1;
-                    col.Margin = margin;
-                    SimulationGrid.Children.Add(col);
+                    Width = new GridLength(sizeInPixels),
+                });
+                for (int i = 0; i < newHeight; i++) SimulationGrid.RowDefinitions.Add(new RowDefinition()
+                {
+                    Height = new GridLength(sizeInPixels)
+                });
 
-                    CurrentSimulation.CurrentWidth = newWidth;
-                    CurrentSimulation.CurrentHeight = newHeight;
+                for(int i = 0; i < newWidth; i++)
+                {
+                    for(int j = 0; j < newHeight; j++)
+                    {
+                        Rectangle rect = new Rectangle()
+                        {
+                            Fill = new SolidColorBrush(CellTypeM.CellTypeGetColor(CellType.Path))
+                        };
+                        Grid.SetColumn(rect, i);
+                        Grid.SetRow(rect, j);
+                        SimulationGrid.Children.Add(rect);
+                    }
                 }
+
+                SimulationGrid.Height = newHeight * sizeInPixels;
+                SimulationGrid.Width = newWidth * sizeInPixels;
+
+                CurrentSimulation.CellGrid.ChangeCellType(1, 1, CellType.End);
+                CurrentSimulation.CellGrid.ChangeCellType(2, 2, CellType.Start);
             } else
             {
-                errorCreation.Content = "Entiers positifs uniquement";
+                MessageBox.Show("Entiers supérieurs à 1 uniquement !");
             }
         }
         public Rectangle GetCellFromGrid(int x, int y)
         {
-            return (Rectangle)((StackPanel)SimulationGrid.Children[x]).Children[y];
-        }
-        private void showGrid_Checked(object sender, RoutedEventArgs e)
-        {
-            foreach(CellType cell in SimulationGrid.Children)
-            {
-                foreach(Rectangle cell in col.Children)
-                {
-                    cell.Stroke = new SolidColorBrush(Colors.Black);
-                }
-            }
-        }
-        private void showGrid_Unchecked(object sender, RoutedEventArgs e)
-        {
-            foreach (StackPanel col in SimulationGrid.Children)
-            {
-                foreach (Rectangle cell in col.Children)
-                {
-                    cell.Stroke = new SolidColorBrush(Colors.Transparent);
-                }
-            }
-        }
+            var grid = SimulationGrid;
 
+            return grid.Children.Cast<Rectangle>().First(c => Grid.GetRow(c) == y && Grid.GetColumn(c) == x);
+        }
         private void btnStartSolv_Click(object sender, RoutedEventArgs e)
         {
             btnPauseSolv.IsEnabled = true;

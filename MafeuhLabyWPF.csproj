@@ -60,6 +60,7 @@
     <Compile Include="RandomWallsSettings.xaml.cs">
       <DependentUpon>RandomWallsSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="Simulation.cs" />
     <Compile Include="WallGenerationAlgorithm.cs" />
     <Page Include="MainWindow.xaml">

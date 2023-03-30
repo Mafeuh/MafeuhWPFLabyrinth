@@ -21,7 +21,7 @@ namespace MafeuhLabyWPF
         };
         public virtual bool HasBorderWalls { get; set; }
         public string AlgorithmName { get; set; }
-        public List<Rectangle> Walls { get; set; }
+        public List<Rectangle> Walls { get; set; } = new List<Rectangle>();
         public WallGenerationAlgorithm(string algorithmName)
         {
             AlgorithmName = algorithmName;
@@ -35,22 +35,6 @@ namespace MafeuhLabyWPF
             return AlgorithmName;
         }
 
-        public void SetWall(Rectangle rectangle)
-        {
-            rectangle.Fill = new SolidColorBrush(Colors.Gray);
-            if (MainWindow.Instance.CurrentSimulation.PathList.Contains(rectangle))
-            {
-                MainWindow.Instance.CurrentSimulation.PathList.Remove(rectangle);
-            }
-        }
-        public void SetPath(Rectangle rectangle)
-        {
-            rectangle.Fill = new SolidColorBrush(Colors.White);
-            if (!MainWindow.Instance.CurrentSimulation.PathList.Contains(rectangle))
-            {
-                MainWindow.Instance.CurrentSimulation.PathList.Add(rectangle);
-            }
-        }
         public List<Rectangle> GetNeighbors((int x, int y) pos)
         {
             var instance = MainWindow.Instance;
@@ -102,10 +86,10 @@ namespace MafeuhLabyWPF
                     if(rnd.NextDouble() < WallDensity)
                     {
                         Walls.Add(cell);
-                        cell.Fill = new SolidColorBrush(MainWindow.CellTypeGetColor(MainWindow.CellType.Wall));
+                        cell.Fill = new SolidColorBrush(CellTypeM.CellTypeGetColor(CellType.Wall));
                     } else
                     {
-                        cell.Fill = new SolidColorBrush(MainWindow.CellTypeGetColor(MainWindow.CellType.Path));
+                        cell.Fill = new SolidColorBrush(CellTypeM.CellTypeGetColor(CellType.Path));
                     }
                 }
             }
@@ -130,8 +114,6 @@ namespace MafeuhLabyWPF
             if (pos.x < 0 || pos.y < 0 || pos.x >= MainWindow.Instance.CurrentSimulation.CurrentWidth || pos.y >= MainWindow.Instance.CurrentSimulation.CurrentHeight) return;
 
             Rectangle r = MainWindow.Instance.GetCellFromGrid(pos.x, pos.y);
-
-            SetPath(r);
 
             foreach(var neighbor in GetNeighborsPositions((pos.x, pos.y)))
             {

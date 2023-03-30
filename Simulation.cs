@@ -19,7 +19,9 @@ namespace MafeuhLabyWPF
         public int CurrentWidth { get; set; }
         public int CurrentHeight { get; set; }
         public WallGenerationAlgorithm Algorithm { get; set; }
-        public List<Rectangle> PathList { get; set; } = new List<Rectangle>();
+        public CellGrid CellGrid { get; set; }
+        public Settings Settings { get; set; } = new Settings();
+        
         public Simulation()
         {
 
